@@ -2,1208 +2,1233 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eco Space Invaders</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Space Invaders</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+      background-repeat: no-repeat;
+      /* Prevents repeating */
+      background-size: contain;
+      /* Ensures the entire image fits inside the element */
+      background-position: center;
+      /* Centers the image */
+    }
 
-        #game-container {
-            position: relative;
-            width: 400px;
-            height: 700px;
-            margin: 20px auto;
-            background-image: url('/api/placeholder/800/600');
-            background-size: cover;
-            overflow: hidden;
-            border: 2px solid #33cc33;
-        }
+    #game-container {
+      position: relative;
+      width: 400px;
+      height: 700px;
+      margin: 20px auto;
 
-        #player {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #33cc33;
-            border-radius: 50%;
-            z-index: 10;
-        }
+      background-color: black;
+      background-size: cover;
+      overflow: hidden;
+      border: 2px solid #33cc33;
+    }
 
-        #player::before {
-            content: "";
-            position: absolute;
-            top: -20px;
-            left: 25px;
-            width: 10px;
-            height: 20px;
-            background-color: #006600;
-        }
+    #player {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #33cc33;
+      border-radius: 50%;
+      z-index: 10;
+    }
 
-        .invader {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #666;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 20px;
-            font-weight: bold;
-            font-size: 10px;
-        }
+    #player::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: 25px;
+      width: 10px;
+      height: 20px;
+      background-color: #006600;
+    }
 
-        .leaf {
-            position: absolute;
-            width: 15px;
-            height: 25px;
-            background-color: #33cc33;
-            clip-path: ellipse(50% 50% at 50% 50%);
-            transform: rotate(-45deg);
-        }
+    .invader {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-image: url('/images/sprite/chatgpt.webp');
+      background-size: auto;
+      /* No stretching */
+      background-repeat: no-repeat;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 20px;
+      font-weight: bold;
+      font-size: 10px;
+    }
 
-        .co2 {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background-color: gray;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 25px;
-            font-size: 8px;
-            opacity: 0.7;
-        }
+    .leaf {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-image: url('/images/sprite/greenSprites.png');
+      background-size: auto;
+      /* No stretching */
+      background-repeat: no-repeat;
+    }
 
-        #temperature-container {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 300px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 2px solid white;
-        }
 
-        #temperature {
-            position: absolute;
-            bottom: 0;
-            width: 30px;
-            height: 0;
-            background: linear-gradient(to top, blue, green, yellow, orange, red);
-        }
+    .co2 {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-image: url('/images/sprite/redSprites.png');
+      background-size: auto;
+      background-repeat: no-repeat;
+    }
 
-        #temperature-label {
-            position: absolute;
-            top: -30px;
-            width: 100%;
-            text-align: center;
-            font-size: 14px;
-        }
 
-        #score-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid white;
-        }
+    #temperature-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 300px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 2px solid white;
+    }
 
-        #game-over {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            display: none;
-        }
+    #temperature {
+      position: absolute;
+      bottom: 0;
+      width: 30px;
+      height: 0;
+      background: linear-gradient(to top, blue, green, yellow, orange, red);
+    }
 
-        #restart-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #33cc33;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    #temperature-label {
+      position: absolute;
+      top: -30px;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+    }
 
-        #level-indicator {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid white;
-        }
+    #score-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid white;
+    }
 
-        #start-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
+    #game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      display: none;
+    }
 
-        #start-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #33cc33;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    #restart-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #33cc33;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-        #bonus-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            display: none;
-        }
+    #level-indicator {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid white;
+    }
 
-        #bonus-title {
-            margin-bottom: 20px;
-            color: #33cc33;
-        }
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
 
-        .bonus-options {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-bottom: 30px;
-        }
+    #start-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #33cc33;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-        .bonus-card {
-            width: 180px;
-            height: 240px;
-            background-color: rgba(51, 204, 51, 0.2);
-            border: 2px solid #33cc33;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+    #bonus-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      display: none;
+    }
 
-        .bonus-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 15px rgba(51, 204, 51, 0.7);
-        }
+    #bonus-title {
+      margin-bottom: 20px;
+      color: #33cc33;
+    }
 
-        .bonus-icon {
-            width: 60px;
-            height: 60px;
-            background-color: #33cc33;
-            border-radius: 50%;
-            margin: 10px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-        }
+    .bonus-options {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-bottom: 30px;
+    }
 
-        .bonus-name {
-            font-weight: bold;
-            margin: 10px 0;
-            text-align: center;
-        }
+    .bonus-card {
+      width: 180px;
+      height: 240px;
+      background-color: rgba(51, 204, 51, 0.2);
+      border: 2px solid #33cc33;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-        .bonus-description {
-            font-size: 12px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+    .bonus-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px rgba(51, 204, 51, 0.7);
+    }
 
-        .bonus-effect {
-            font-size: 14px;
-            color: #33cc33;
-            margin-top: 5px;
-        }
+    .bonus-icon {
+      width: 60px;
+      height: 60px;
+      background-color: #33cc33;
+      border-radius: 50%;
+      margin: 10px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+    }
 
-        .bonus-malus {
-            font-size: 14px;
-            color: #cc3333;
-            margin-top: 5px;
-        }
+    .bonus-name {
+      font-weight: bold;
+      margin: 10px 0;
+      text-align: center;
+    }
 
-        #active-bonuses {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: flex;
-            gap: 5px;
-        }
+    .bonus-description {
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-        .active-bonus {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: rgba(51, 204, 51, 0.5);
-            border: 1px solid #33cc33;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-        }
+    .bonus-effect {
+      font-size: 14px;
+      color: #33cc33;
+      margin-top: 5px;
+    }
 
-        #multi-shot {
-            position: absolute;
-            width: 100%;
-            height: 50px;
-            bottom: 5px;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
+    .bonus-malus {
+      font-size: 14px;
+      color: #cc3333;
+      margin-top: 5px;
+    }
 
-        .level-transition {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 90;
-            font-size: 48px;
-            font-weight: bold;
-            color: #33cc33;
-            display: none;
-        }
-    </style>
+    #active-bonuses {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .active-bonus {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(51, 204, 51, 0.5);
+      border: 1px solid #33cc33;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+    }
+
+    #multi-shot {
+      position: absolute;
+      width: 100%;
+      height: 50px;
+      bottom: 5px;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .level-transition {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 90;
+      font-size: 48px;
+      font-weight: bold;
+      color: #33cc33;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="game-container">
-        <div id="player"></div>
-        <div id="multi-shot"></div>
-        <div id="temperature-container">
-            <div id="temperature"></div>
-            <div id="temperature-label">0°C</div>
-        </div>
-        <div id="score-container">Score: <span id="score">0</span></div>
-        <div id="level-indicator">Level: <span id="level">1</span></div>
-        <div id="active-bonuses"></div>
+  <audio id="audioPlayer"></audio>
+  <div id="game-container">
+    <div id="player"></div>
+    <div id="multi-shot"></div>
+    <div id="temperature-container">
+      <div id="temperature"></div>
+      <div id="temperature-label">0°C</div>
+    </div>
+    <div id="score-container">Score: <span id="score">0</span></div>
+    <div id="level-indicator">Level: <span id="level">1</span></div>
+    <div id="active-bonuses"></div>
 
-        <div id="game-over">
-            <h1>GAME OVER</h1>
-            <h2>Global warming is out of control!</h2>
-            <p>Final Score: <span id="final-score">0</span></p>
-            <button id="restart-btn">Play Again</button>
-        </div>
-
-        <div id="start-screen">
-            <h1>ECO SPACE INVADERS</h1>
-            <p>Defend Earth from CO2-dropping invaders!</p>
-            <p>Use LEFT/RIGHT arrows or A/D keys to move</p>
-            <p>SPACE to shoot leaves</p>
-            <p>Don't let the temperature reach 100°C or the planet will overheat!</p>
-            <p>After each level, choose an eco-bonus to help you save the planet!</p>
-            <button id="start-btn">Start Game</button>
-        </div>
-
-        <div id="bonus-screen">
-            <h1 id="bonus-title">Level Complete! Choose an Eco-Bonus</h1>
-            <div class="bonus-options">
-                <!-- Bonus cards will be inserted here -->
-            </div>
-        </div>
-
-        <div class="level-transition">
-            Level <span id="new-level">2</span>
-        </div>
+    <div id="game-over">
+      <h1>GAME OVER</h1>
+      <h2>Global warming is out of control!</h2>
+      <p>Final Score: <span id="final-score">0</span></p>
+      <button id="restart-btn">Play Again</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-  // Game elements
-  const gameContainer = document.getElementById('game-container');
-  const player = document.getElementById('player');
-  const temperatureEl = document.getElementById('temperature');
-  const temperatureLabel = document.getElementById('temperature-label');
-  const scoreEl = document.getElementById('score');
-  const gameOverEl = document.getElementById('game-over');
-  const finalScoreEl = document.getElementById('final-score');
-  const restartBtn = document.getElementById('restart-btn');
-  const startScreen = document.getElementById('start-screen');
-  const startBtn = document.getElementById('start-btn');
-  const levelEl = document.getElementById('level');
-  const bonusScreen = document.getElementById('bonus-screen');
-  const bonusOptions = document.querySelector('.bonus-options');
-  const activeBonusesContainer = document.getElementById('active-bonuses');
-  const multiShotContainer = document.getElementById('multi-shot');
-  const levelTransition = document.querySelector('.level-transition');
-  const newLevelEl = document.getElementById('new-level');
-  
-  // Game variables
-  let playerX = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
-  let playerSpeed = 10;
-  let invaders = [];
-  let leaves = [];
-  let co2Particles = [];
-  let score = 0;
-  let temperature = 0;
-  let gameOver = false;
-  let gameStarted = false;
-  let level = 1;
-  let invaderSpawnRate = 2000; // ms
-  let invaderSpeed = 0.7;
-  let co2DropRate = 3000; // ms
-  let activeTimers = [];
-  
-  // Space Invaders specific variables
-  let invaderGroup = {
-    rows: 3,                
-    cols: 10,                
-    width: 20,
-    height: 20,
-    padding: 15,
-    x: 30,
-    y: 50,
-    direction: 1,           // 1 for right, -1 for left
-    moveSpeed: 20,         // Increased base speed slightly
-    moveDownStep: 20,
-    moveInterval: 600,      // ms between movements (slowed down slightly)
-    lastMove: 0,
-    dropChance: 0.03        // chance for an invader to drop CO2 each move
-  };
-  
-  // Player bonus stats
-  let playerStats = {
-    shootSpeed: 500,        // ms between shots
-    multiShot: 1,           // number of leaves per shot
-    shootWidth: 0,          // spread of multi-shot in degrees
-    healRate: 0,            // temperature reduction per second
-    leafSpeed: 8,           // speed of leaves
-    co2Absorption: 1,       // how much temperature is reduced when a leaf hits CO2
-    lastShot: 0,            // timestamp of last shot
-    activeBonuses: []
-  };
-  
-  // Available bonuses
-  const bonuses = [
-    {
-      id: 'tree-planting',
-      name: 'Tree Planting Initiative',
-      icon: '🌳',
-      description: 'Plant new trees to absorb CO2',
-      effect: 'Reduces temperature by 10°C immediately',
-      malus: '',
-      apply: () => {
-        temperature = Math.max(0, temperature - 10);
-        updateTemperature();
-        return 'one-time';
-      }
-    },
-    {
-      id: 'solar-power',
-      name: 'Solar Power Array',
-      icon: '☀️',
-      description: 'Clean energy improves your firing rate',
-      effect: 'Fire leaves 30% faster',
-      malus: '',
-      apply: () => {
-        playerStats.shootSpeed = Math.max(100, playerStats.shootSpeed * 0.7);
-        return 'permanent';
-      }
-    },
-    {
-      id: 'wind-farm',
-      name: 'Wind Turbine Farm',
-      icon: '🌀',
-      description: 'Clean energy powers up leaf speed',
-      effect: '25% faster leaf movement',
-      malus: '',
-      apply: () => {
-        playerStats.leafSpeed *= 1.25;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'recycling',
-      name: 'Recycling Program',
-      icon: '♻️',
-      description: 'Reuse materials to create more leaves',
-      effect: 'Fire 2 leaves at once',
-      malus: '',
-      apply: () => {
-        playerStats.multiShot = playerStats.multiShot == 1 ? 2 : playerStats.multiShot+2;
-        playerStats.shootWidth = playerStats.multiShot * 7.5;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'reforestation',
-      name: 'Massive Reforestation',
-      icon: '🌲',
-      description: 'Continuous CO2 absorption',
-      effect: 'Temperature slowly decreases over time',
-      malus: '',
-      apply: () => {
-        playerStats.healRate = 0.3;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'sustainable-agriculture',
-      name: 'Sustainable Agriculture',
-      icon: '🌱',
-      description: 'Healthier ecosystems absorb more CO2',
-      effect: 'Leaves absorb twice as much CO2',
-      malus: '',
-      apply: () => {
-        playerStats.co2Absorption = 2;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'carbon-capture',
-      name: 'Carbon Capture Tech',
-      icon: '🔬',
-      description: 'Advanced technology to filter carbon',
-      effect: '20°C temperature reduction',
-      malus: 'Slightly increases overall CO2 production',
-      apply: () => {
-        temperature = Math.max(0, temperature - 20);
-        updateTemperature();
-        
-        // Malus: Slightly increases CO2 drop rate
-        invaderGroup.dropChance *= 1.1;
-        
-        return 'one-time';
-      }
-    },
-    {
-      id: 'industrial-upgrade',
-      name: 'Industrial Eco-Upgrade',
-      icon: '🏭',
-      description: 'Factory retrofitting for cleaner production',
-      effect: '3 leaves fired at once',
-      malus: 'Temperature rises slightly faster',
-      apply: () => {
-        playerStats.multiShot = playerStats.multiShot == 1 ? 3 : playerStats.multiShot+3;
-        playerStats.shootWidth = playerStats.multiShot * 7.5;
-        
-        // Malus: Slight passive temperature increase
-        const timer = setInterval(() => {
-          if (!gameOver) {
-            temperature += 0.05;
+    <div id="start-screen">
+      <h1>ECO SPACE INVADERS</h1>
+      <p>Defend Earth from CO2-dropping invaders!</p>
+      <p>Use LEFT/RIGHT arrows or A/D keys to move</p>
+      <p>SPACE to shoot leaves</p>
+      <p>Don't let the temperature reach 100°C or the planet will overheat!</p>
+      <p>After each level, choose an eco-bonus to help you save the planet!</p>
+      <button id="start-btn">Start Game</button>
+    </div>
+
+    <div id="bonus-screen">
+      <h1 id="bonus-title">Level Complete! Choose an Eco-Bonus</h1>
+      <div class="bonus-options">
+        <!-- Bonus cards will be inserted here -->
+      </div>
+    </div>
+
+    <div class="level-transition">
+      Level <span id="new-level">2</span>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Game elements
+      const gameContainer = document.getElementById('game-container');
+      const player = document.getElementById('player');
+      const temperatureEl = document.getElementById('temperature');
+      const temperatureLabel = document.getElementById('temperature-label');
+      const scoreEl = document.getElementById('score');
+      const gameOverEl = document.getElementById('game-over');
+      const finalScoreEl = document.getElementById('final-score');
+      const restartBtn = document.getElementById('restart-btn');
+      const startScreen = document.getElementById('start-screen');
+      const startBtn = document.getElementById('start-btn');
+      const levelEl = document.getElementById('level');
+      const bonusScreen = document.getElementById('bonus-screen');
+      const bonusOptions = document.querySelector('.bonus-options');
+      const activeBonusesContainer = document.getElementById('active-bonuses');
+      const multiShotContainer = document.getElementById('multi-shot');
+      const levelTransition = document.querySelector('.level-transition');
+      const newLevelEl = document.getElementById('new-level');
+      const audioPlayer = document.getElementById('audioPlayer');
+
+      const soundFiles = ["sounds/game.mp3", "sounds/lost.mp3"];
+      // Game variables
+      let imageBackground = 'url("/images/forest/forest';
+      let imagePerHealth = ['01.png")', '02.png")', '03.png")', '04.png")'];
+      let playerX = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
+      let playerSpeed = 10;
+      let invaders = [];
+      let leaves = [];
+      let co2Particles = [];
+      let score = 0;
+      let temperature = 0;
+      let gameOver = false;
+      let gameStarted = false;
+      let level = 1;
+      let invaderSpawnRate = 2000; // ms
+      let invaderSpeed = 0.7;
+      let co2DropRate = 3000; // ms
+      let activeTimers = [];
+
+      // Space Invaders specific variables
+      let invaderGroup = {
+        rows: 3,
+        cols: 10,
+        width: 20,
+        height: 20,
+        padding: 15,
+        x: 30,
+        y: 50,
+        direction: 1,           // 1 for right, -1 for left
+        moveSpeed: 20,         // Increased base speed slightly
+        moveDownStep: 20,
+        moveInterval: 600,      // ms between movements (slowed down slightly)
+        lastMove: 0,
+        dropChance: 0.03        // chance for an invader to drop CO2 each move
+      };
+
+      // Player bonus stats
+      let playerStats = {
+        shootSpeed: 500,        // ms between shots
+        multiShot: 1,           // number of leaves per shot
+        shootWidth: 0,          // spread of multi-shot in degrees
+        healRate: 0,            // temperature reduction per second
+        leafSpeed: 8,           // speed of leaves
+        co2Absorption: 1,       // how much temperature is reduced when a leaf hits CO2
+        lastShot: 0,            // timestamp of last shot
+        activeBonuses: []
+      };
+
+      // Available bonuses
+      const bonuses = [
+        {
+          id: 'tree-planting',
+          name: 'Tree Planting Initiative',
+          icon: '🌳',
+          description: 'Plant new trees to absorb CO2',
+          effect: 'Reduces temperature by 10°C immediately',
+          malus: '',
+          apply: () => {
+            temperature = Math.max(0, temperature - 10);
             updateTemperature();
-            
+            return 'one-time';
+          }
+        },
+        {
+          id: 'solar-power',
+          name: 'Solar Power Array',
+          icon: '☀️',
+          description: 'Clean energy improves your firing rate',
+          effect: 'Fire leaves 30% faster',
+          malus: '',
+          apply: () => {
+            playerStats.shootSpeed = Math.max(100, playerStats.shootSpeed * 0.7);
+            return 'permanent';
+          }
+        },
+        {
+          id: 'wind-farm',
+          name: 'Wind Turbine Farm',
+          icon: '🌀',
+          description: 'Clean energy powers up leaf speed',
+          effect: '25% faster leaf movement',
+          malus: '',
+          apply: () => {
+            playerStats.leafSpeed *= 1.25;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'recycling',
+          name: 'Recycling Program',
+          icon: '♻️',
+          description: 'Reuse materials to create more leaves',
+          effect: 'Fire 2 leaves at once',
+          malus: '',
+          apply: () => {
+            playerStats.multiShot = playerStats.multiShot == 1 ? 2 : playerStats.multiShot + 2;
+            playerStats.shootWidth = playerStats.multiShot * 7.5;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'reforestation',
+          name: 'Massive Reforestation',
+          icon: '🌲',
+          description: 'Continuous CO2 absorption',
+          effect: 'Temperature slowly decreases over time',
+          malus: '',
+          apply: () => {
+            playerStats.healRate = 0.3;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'sustainable-agriculture',
+          name: 'Sustainable Agriculture',
+          icon: '🌱',
+          description: 'Healthier ecosystems absorb more CO2',
+          effect: 'Leaves absorb twice as much CO2',
+          malus: '',
+          apply: () => {
+            playerStats.co2Absorption = 2;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'carbon-capture',
+          name: 'Carbon Capture Tech',
+          icon: '🔬',
+          description: 'Advanced technology to filter carbon',
+          effect: '20°C temperature reduction',
+          malus: 'Slightly increases overall CO2 production',
+          apply: () => {
+            temperature = Math.max(0, temperature - 20);
+            updateTemperature();
+
+            // Malus: Slightly increases CO2 drop rate
+            invaderGroup.dropChance *= 1.1;
+
+            return 'one-time';
+          }
+        },
+        {
+          id: 'industrial-upgrade',
+          name: 'Industrial Eco-Upgrade',
+          icon: '🏭',
+          description: 'Factory retrofitting for cleaner production',
+          effect: '3 leaves fired at once',
+          malus: 'Temperature rises slightly faster',
+          apply: () => {
+            playerStats.multiShot = playerStats.multiShot == 1 ? 3 : playerStats.multiShot + 3;
+            playerStats.shootWidth = playerStats.multiShot * 7.5;
+
+            // Malus: Slight passive temperature increase
+            const timer = setInterval(() => {
+              if (!gameOver) {
+                temperature += 0.05;
+                updateTemperature();
+
+                if (temperature >= 100) {
+                  endGame();
+                }
+              }
+            }, 1000);
+
+            activeTimers.push(timer);
+            return 'permanent';
+          }
+        },
+        {
+          id: 'policy-change',
+          name: 'Environmental Policy',
+          icon: '📜',
+          description: 'New regulations slow down emission rates',
+          effect: 'Invaders drop CO2 33% less frequently',
+          malus: '',
+          apply: () => {
+            invaderGroup.dropChance *= 0.67;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'rapid-response',
+          name: 'Rapid Response Team',
+          icon: '🚒',
+          description: 'Emergency team to fight climate disasters',
+          effect: 'Player movement speed +40%',
+          malus: '',
+          apply: () => {
+            playerSpeed *= 1.4;
+            return 'permanent';
+          }
+        },
+        {
+          id: 'renewable-research',
+          name: 'Renewable Research',
+          icon: '🧪',
+          description: 'Scientific breakthrough in clean tech',
+          effect: 'Fire 4 leaves at once',
+          malus: 'Temporarily increases temperature by 15°C',
+          apply: () => {
+            playerStats.multiShot = playerStats.multiShot == 1 ? 4 : playerStats.multiShot + 4;
+            playerStats.shootWidth = playerStats.multiShot * 7.5;
+
+            // Malus: Immediate temperature increase
+            temperature = Math.min(99, temperature + 15);
+            updateTemperature();
+
+            return 'permanent';
+          }
+        }
+      ];
+
+      // Keys state
+      const keys = {
+        left: false,
+        right: false,
+        space: false
+      };
+
+      // Initialize player position
+      player.style.left = `${playerX}px`;
+
+      // Start game function
+      function startGame() {
+        audioPlayer.src = soundFiles[0];
+        audioPlayer.play(); // Auto-play the new sound
+        startScreen.style.display = 'none';
+        gameStarted = true;
+        resetGame();
+        gameLoop();
+        spawnInvaderGrid();
+      }
+
+      // Reset game
+      function resetGame() {
+        playerX = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
+        player.style.left = `${playerX}px`;
+
+        // Clear all entities
+        invaders.forEach(invader => invader.element.remove());
+        leaves.forEach(leaf => leaf.element.remove());
+        co2Particles.forEach(co2 => co2.element.remove());
+
+        // Clear active timers
+        activeTimers.forEach(timer => {
+          if (typeof timer === 'number') {
+            clearTimeout(timer);
+          } else {
+            clearInterval(timer);
+          }
+        });
+        activeTimers = [];
+
+        // Clear active bonuses
+        activeBonusesContainer.innerHTML = '';
+
+        invaders = [];
+        leaves = [];
+        co2Particles = [];
+        score = 0;
+        temperature = 0;
+        gameOver = false;
+        level = 1;
+
+        // Reset invader group
+        invaderGroup = {
+          rows: 3,
+          cols: 10,
+          width: 20,
+          height: 20,
+          padding: 15,
+          x: 30,
+          y: 50,
+          direction: 1,           // 1 for right, -1 for left
+          moveSpeed: 20,         // Increased base speed slightly
+          moveDownStep: 20,
+          moveInterval: 600,      // ms between movements (slowed down slightly)
+          lastMove: 0,
+          dropChance: 0.03        // chance for an invader to drop CO2 each move
+        };
+
+        // Reset player stats
+        playerStats = {
+          shootSpeed: 500,
+          multiShot: 1,
+          shootWidth: 0,
+          healRate: 0,
+          leafSpeed: 8,
+          co2Absorption: 1,
+          lastShot: 0,
+          activeBonuses: []
+        };
+
+        // Reset UI
+        scoreEl.textContent = score;
+        temperatureEl.style.height = '0px';
+        temperatureLabel.textContent = '0°C';
+        levelEl.textContent = level;
+
+        gameOverEl.style.display = 'none';
+      }
+
+      const spriteEnemy = ["/images/sprite/mistral.png", "/images/sprite/deepseek.jpg", "/images/sprite/chatgpt.webp"];
+      // Spawn grid of invaders (Space Invaders style)
+      function spawnInvaderGrid() {
+        if (!gameStarted || gameOver) return;
+
+        // Clear any existing invaders
+        invaders.forEach(invader => invader.element.remove());
+        invaders = [];
+
+        // Create grid of invaders
+        for (let row = 0; row < invaderGroup.rows; row++) {
+          for (let col = 0; col < invaderGroup.cols; col++) {
+            const invader = document.createElement('div');
+            invader.className = 'invader';
+            gameContainer.appendChild(invader);
+
+            const x = invaderGroup.x + col * (invaderGroup.width + invaderGroup.padding);
+            const y = invaderGroup.y + row * (invaderGroup.height + invaderGroup.padding);
+
+            const invaderObj = {
+              element: invader,
+              x: x,
+              y: y,
+              row: row,
+              col: col,
+              width: invaderGroup.width,
+              height: invaderGroup.height,
+              //random between /images/sprite/ mistral.png, chatgpt.webp and deepseek.jpg 
+              backgroundImage: spriteEnemy[Math.floor(Math.random() * spriteEnemy.length)],
+              lastDrop: Date.now(),
+              alive: true
+            };
+
+            invader.style.left = `${x}px`;
+            invader.style.top = `${y}px`;
+
+            invaders.push(invaderObj);
+          }
+        }
+      }
+
+      // Move invader grid (Space Invaders style)
+      function moveInvaderGrid() {
+        if (!gameStarted || gameOver || Date.now() - invaderGroup.lastMove < invaderGroup.moveInterval) return;
+
+        invaderGroup.lastMove = Date.now();
+
+        // Find the leftmost and rightmost invaders
+        let leftmost = gameContainer.offsetWidth;
+        let rightmost = 0;
+
+        // Find the bottom-most invader
+        let bottommost = 0;
+
+        // Check if any invaders are still alive
+        let anyAlive = false;
+
+        invaders.forEach(invader => {
+          if (invader.alive) {
+            anyAlive = true;
+            leftmost = Math.min(leftmost, invader.x);
+            rightmost = Math.max(rightmost, invader.x + invader.width);
+            bottommost = Math.max(bottommost, invader.y + invader.height);
+          }
+        });
+
+        // If no invaders are alive, level is complete
+        if (!anyAlive && score != 0) {
+          levelComplete();
+          return;
+        }
+
+        // Check if invaders hit the side boundaries
+        const hitBoundary = (rightmost + invaderGroup.moveSpeed * invaderGroup.direction >= gameContainer.offsetWidth - 10) ||
+          (leftmost + invaderGroup.moveSpeed * invaderGroup.direction <= 10);
+
+        // Check if invaders have reached the bottom
+        if (bottommost >= gameContainer.offsetHeight - 100) {
+          // Game over if invaders reach too low
+          temperature = 100; // Set temperature to max to trigger game over
+          updateTemperature();
+          endGame();
+          return;
+        }
+
+        // Move invaders
+        if (hitBoundary) {
+          // Change direction and move down
+          invaderGroup.direction *= -1;
+
+          invaders.forEach(invader => {
+            if (invader.alive) {
+              invader.y += invaderGroup.moveDownStep;
+              invader.element.style.top = `${invader.y}px`;
+
+              // Randomly drop CO2
+              if (Math.random() < invaderGroup.dropChance) {
+                dropCO2(invader);
+              }
+            }
+          });
+        } else {
+          // Move sideways
+          invaders.forEach(invader => {
+            if (invader.alive) {
+              invader.x += invaderGroup.moveSpeed * invaderGroup.direction;
+              invader.element.style.left = `${invader.x}px`;
+
+              // Randomly drop CO2
+              if (Math.random() < invaderGroup.dropChance) {
+                dropCO2(invader);
+              }
+            }
+          });
+        }
+      }
+
+      // Shoot leaf
+      function shootLeaf() {
+        if (gameOver || Date.now() - playerStats.lastShot < playerStats.shootSpeed) return;
+
+        playerStats.lastShot = Date.now();
+
+        // Clear previous multi-shot display
+        multiShotContainer.innerHTML = '';
+
+        // Create multiple leaves based on multiShot count
+        for (let i = 0; i < playerStats.multiShot; i++) {
+          const leaf = document.createElement('div');
+          leaf.className = 'leaf';
+          gameContainer.appendChild(leaf);
+
+          let angle = 0;
+          if (playerStats.multiShot > 1) {
+            angle = -playerStats.shootWidth / 2 + (i * playerStats.shootWidth) / (playerStats.multiShot - 1);
+          }
+
+          const radians = angle * (Math.PI / 180);
+          const xVelocity = Math.sin(radians) * playerStats.leafSpeed;
+          const yVelocity = -Math.cos(radians) * playerStats.leafSpeed;
+
+          const leafObj = {
+            element: leaf,
+            x: playerX + player.offsetWidth / 2 - 7.5,
+            y: gameContainer.offsetHeight - player.offsetHeight - 20,
+            xVelocity: xVelocity,
+            yVelocity: yVelocity,
+            width: 16,
+            height: 16
+          };
+
+          leaf.style.left = `${leafObj.x}px`;
+          leaf.style.top = `${leafObj.y}px`;
+
+          // Select a frame from the sprite sheet
+          const frameX = (i % 5) * 16; // Change 5 based on the number of columns in the sprite sheet
+          const frameY = Math.floor(i / 5) * 16; // Change based on rows
+          leaf.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+
+          leaves.push(leafObj);
+        }
+
+
+        // Remove shot indicators after a short delay
+        setTimeout(() => {
+          multiShotContainer.innerHTML = '';
+        }, 200);
+      }
+
+      // Drop CO2
+      function dropCO2(invader) {
+        if (gameOver || !invader.alive) return;
+        if (gameOver || !invader.alive) return;
+
+        const co2 = document.createElement('div');
+        co2.className = 'co2';
+        gameContainer.appendChild(co2);
+
+        const co2Obj = {
+          element: co2,
+          x: invader.x + invader.width / 2 - 8, // Adjust for 16px size
+          y: invader.y + invader.height,
+          speed: 3 + Math.random() * 2,
+          width: 16,
+          height: 16
+        };
+
+        // Set the CO2 bullet position
+        co2.style.left = `${co2Obj.x}px`;
+        co2.style.top = `${co2Obj.y}px`;
+
+        // Select a frame from the sprite sheet for CO2 bullets
+        const frameX = 8 * 16; // Adjust 5 based on sprite sheet columns
+        const frameY = 16 * 7; // Example: Use row 1 for CO2 bullets
+
+        co2.style.backgroundPosition = `-${frameX}px -${frameY}px`;
+
+        co2Particles.push(co2Obj);
+        invader.lastDrop = Date.now();
+      }
+
+      // Check collisions
+      function checkCollisions() {
+        if (gameOver) return;
+
+        // Check leaf-invader collisions
+        for (let i = leaves.length - 1; i >= 0; i--) {
+          const leaf = leaves[i];
+
+          // Remove leaves that go off screen
+          if (leaf.y < -leaf.height) {
+            leaf.element.remove();
+            leaves.splice(i, 1);
+            continue;
+          }
+
+          // Check collisions with invaders
+          for (let j = invaders.length - 1; j >= 0; j--) {
+            const invader = invaders[j];
+
+            if (!invader.alive) continue;
+
+            if (checkCollision(leaf, invader)) {
+              // Remove leaf
+              leaf.element.remove();
+              leaves.splice(i, 1);
+
+              // Remove invader
+              invader.alive = false;
+              invader.element.remove();
+
+              // Add score
+              const pointValue = 10 * (1 + 0.25 * playerStats.activeBonuses.filter(b => b.id === 'eco-education').length);
+              score += pointValue;
+              scoreEl.textContent = score;
+
+              // Check if all invaders are defeated
+              if (invaders.every(inv => !inv.alive) && score != 0) {
+                levelComplete();
+              }
+
+              break;
+            }
+          }
+        }
+
+        // Check leaf-CO2 collisions
+        for (let i = leaves.length - 1; i >= 0; i--) {
+          const leaf = leaves[i];
+
+          for (let j = co2Particles.length - 1; j >= 0; j--) {
+            const co2 = co2Particles[j];
+
+            if (checkCollision(leaf, co2)) {
+              // Remove leaf
+              leaf.element.remove();
+              leaves.splice(i, 1);
+
+              // Remove CO2
+              co2.element.remove();
+              co2Particles.splice(j, 1);
+
+              // Decrease temperature
+              temperature = Math.max(0, temperature - (0.5 * playerStats.co2Absorption));
+              updateTemperature();
+
+              // Add score
+              const pointValue = 5 * (1 + 0.25 * playerStats.activeBonuses.filter(b => b.id === 'eco-education').length);
+              score += pointValue;
+              scoreEl.textContent = score;
+
+              break;
+            }
+          }
+        }
+
+        // Check CO2-player collisions
+        for (let i = co2Particles.length - 1; i >= 0; i--) {
+          const co2 = co2Particles[i];
+
+          // Check if CO2 reached bottom
+          if (co2.y > gameContainer.offsetHeight) {
+            co2.element.remove();
+            co2Particles.splice(i, 1);
+
+            // Increase temperature
+            temperature += 1;
+            updateTemperature();
+
+            if (temperature >= 100) {
+              endGame();
+            }
+
+            continue;
+          }
+
+          // Check collision with player
+          if (checkCollision(co2, {
+            x: playerX,
+            y: gameContainer.offsetHeight - player.offsetHeight - 20,
+            width: player.offsetWidth,
+            height: player.offsetHeight
+          })) {
+            co2.element.remove();
+            co2Particles.splice(i, 1);
+
+            // Increase temperature more when hitting player directly
+            temperature += 2;
+            updateTemperature();
+
             if (temperature >= 100) {
               endGame();
             }
           }
-        }, 1000);
-        
-        activeTimers.push(timer);
-        return 'permanent';
-      }
-    },
-    {
-      id: 'policy-change',
-      name: 'Environmental Policy',
-      icon: '📜',
-      description: 'New regulations slow down emission rates',
-      effect: 'Invaders drop CO2 33% less frequently',
-      malus: '',
-      apply: () => {
-        invaderGroup.dropChance *= 0.67;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'rapid-response',
-      name: 'Rapid Response Team',
-      icon: '🚒',
-      description: 'Emergency team to fight climate disasters',
-      effect: 'Player movement speed +40%',
-      malus: '',
-      apply: () => {
-        playerSpeed *= 1.4;
-        return 'permanent';
-      }
-    },
-    {
-      id: 'renewable-research',
-      name: 'Renewable Research',
-      icon: '🧪',
-      description: 'Scientific breakthrough in clean tech',
-      effect: 'Fire 4 leaves at once',
-      malus: 'Temporarily increases temperature by 15°C',
-      apply: () => {
-        playerStats.multiShot = playerStats.multiShot == 1 ? 4 : playerStats.multiShot+4;
-        playerStats.shootWidth = playerStats.multiShot * 7.5;
-        
-        // Malus: Immediate temperature increase
-        temperature = Math.min(99, temperature + 15);
-        updateTemperature();
-        
-        return 'permanent';
-      }
-    }
-  ];
-  
-  // Keys state
-  const keys = {
-    left: false,
-    right: false,
-    space: false
-  };
-  
-  // Initialize player position
-  player.style.left = `${playerX}px`;
-  
-  // Start game function
-  function startGame() {
-    startScreen.style.display = 'none';
-    gameStarted = true;
-    resetGame();
-    gameLoop();
-    spawnInvaderGrid();
-  }
-  
-  // Reset game
-  function resetGame() {
-    playerX = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
-    player.style.left = `${playerX}px`;
-    
-    // Clear all entities
-    invaders.forEach(invader => invader.element.remove());
-    leaves.forEach(leaf => leaf.element.remove());
-    co2Particles.forEach(co2 => co2.element.remove());
-    
-    // Clear active timers
-    activeTimers.forEach(timer => {
-      if (typeof timer === 'number') {
-        clearTimeout(timer);
-      } else {
-        clearInterval(timer);
-      }
-    });
-    activeTimers = [];
-    
-    // Clear active bonuses
-    activeBonusesContainer.innerHTML = '';
-    
-    invaders = [];
-    leaves = [];
-    co2Particles = [];
-    score = 0;
-    temperature = 0;
-    gameOver = false;
-    level = 1;
-    
-    // Reset invader group
-    invaderGroup = {
-    rows: 3,                
-    cols: 10,                
-    width: 20,
-    height: 20,
-    padding: 15,
-    x: 30,
-    y: 50,
-    direction: 1,           // 1 for right, -1 for left
-    moveSpeed: 20,         // Increased base speed slightly
-    moveDownStep: 20,
-    moveInterval: 600,      // ms between movements (slowed down slightly)
-    lastMove: 0,
-    dropChance: 0.03        // chance for an invader to drop CO2 each move
-    };
-    
-    // Reset player stats
-    playerStats = {
-      shootSpeed: 500,
-      multiShot: 1,
-      shootWidth: 0,
-      healRate: 0,
-      leafSpeed: 8,
-      co2Absorption: 1,
-      lastShot: 0,
-      activeBonuses: []
-    };
-    
-    // Reset UI
-    scoreEl.textContent = score;
-    temperatureEl.style.height = '0px';
-    temperatureLabel.textContent = '0°C';
-    levelEl.textContent = level;
-    
-    gameOverEl.style.display = 'none';
-  }
-  
-  // Spawn grid of invaders (Space Invaders style)
-  function spawnInvaderGrid() {
-    if (!gameStarted || gameOver) return;
-    
-    // Clear any existing invaders
-    invaders.forEach(invader => invader.element.remove());
-    invaders = [];
-    
-    // Create grid of invaders
-    for (let row = 0; row < invaderGroup.rows; row++) {
-      for (let col = 0; col < invaderGroup.cols; col++) {
-        const invader = document.createElement('div');
-        invader.className = 'invader';
-        invader.textContent = 'CO2';
-        gameContainer.appendChild(invader);
-        
-        const x = invaderGroup.x + col * (invaderGroup.width + invaderGroup.padding);
-        const y = invaderGroup.y + row * (invaderGroup.height + invaderGroup.padding);
-        console.log(x, y);
-        
-        const invaderObj = {
-          element: invader,
-          x: x,
-          y: y,
-          row: row,
-          col: col,
-          width: invaderGroup.width,
-          height: invaderGroup.height,
-          lastDrop: Date.now(),
-          alive: true
-        };
-        
-        invader.style.left = `${x}px`;
-        invader.style.top = `${y}px`;
-        
-        invaders.push(invaderObj);
-      }
-    }
-  }
-  
-  // Move invader grid (Space Invaders style)
-  function moveInvaderGrid() {
-    if (!gameStarted || gameOver || Date.now() - invaderGroup.lastMove < invaderGroup.moveInterval) return;
-    
-    invaderGroup.lastMove = Date.now();
-    
-    // Find the leftmost and rightmost invaders
-    let leftmost = gameContainer.offsetWidth;
-    let rightmost = 0;
-    
-    // Find the bottom-most invader
-    let bottommost = 0;
-    
-    // Check if any invaders are still alive
-    let anyAlive = false;
-    
-    invaders.forEach(invader => {
-      if (invader.alive) {
-        anyAlive = true;
-        leftmost = Math.min(leftmost, invader.x);
-        rightmost = Math.max(rightmost, invader.x + invader.width);
-        bottommost = Math.max(bottommost, invader.y + invader.height);
-      }
-    });
-    
-    // If no invaders are alive, level is complete
-    if (!anyAlive && score != 0) {
-      levelComplete();
-      return;
-    }
-    
-    // Check if invaders hit the side boundaries
-    const hitBoundary = (rightmost + invaderGroup.moveSpeed * invaderGroup.direction >= gameContainer.offsetWidth - 10) || 
-                       (leftmost + invaderGroup.moveSpeed * invaderGroup.direction <= 10);
-    
-    // Check if invaders have reached the bottom
-    if (bottommost >= gameContainer.offsetHeight - 100) {
-      // Game over if invaders reach too low
-      temperature = 100; // Set temperature to max to trigger game over
-      updateTemperature();
-      endGame();
-      return;
-    }
-    
-    // Move invaders
-    if (hitBoundary) {
-      // Change direction and move down
-      invaderGroup.direction *= -1;
-      
-      invaders.forEach(invader => {
-        if (invader.alive) {
-          invader.y += invaderGroup.moveDownStep;
-          invader.element.style.top = `${invader.y}px`;
-          
-          // Randomly drop CO2
-          if (Math.random() < invaderGroup.dropChance) {
-            dropCO2(invader);
-          }
-        }
-      });
-    } else {
-      // Move sideways
-      invaders.forEach(invader => {
-        if (invader.alive) {
-          invader.x += invaderGroup.moveSpeed * invaderGroup.direction;
-          invader.element.style.left = `${invader.x}px`;
-          
-          // Randomly drop CO2
-          if (Math.random() < invaderGroup.dropChance) {
-            dropCO2(invader);
-          }
-        }
-      });
-    }
-  }
-  
-  // Shoot leaf
-  function shootLeaf() {
-    if (gameOver || Date.now() - playerStats.lastShot < playerStats.shootSpeed) return;
-    
-    playerStats.lastShot = Date.now();
-    
-    // Clear previous multi-shot display
-    multiShotContainer.innerHTML = '';
-    
-    // Create multiple leaves based on multiShot count
-    for (let i = 0; i < playerStats.multiShot; i++) {
-      const leaf = document.createElement('div');
-      leaf.className = 'leaf';
-      gameContainer.appendChild(leaf);
-      
-      // Calculate angle for spread
-      let angle = 0;
-      if (playerStats.multiShot > 1) {
-        // Distribute shots evenly within the shoot width
-        angle = -playerStats.shootWidth / 2 + (i * playerStats.shootWidth) / (playerStats.multiShot - 1);
-      }
-      
-      // Display shoot pattern temporarily
-      const shotIndicator = document.createElement('div');
-      shotIndicator.style.position = 'absolute';
-      shotIndicator.style.width = '2px';
-      shotIndicator.style.height = '20px';
-      shotIndicator.style.backgroundColor = 'rgba(51, 204, 51, 0.5)';
-      shotIndicator.style.left = '50%';
-      shotIndicator.style.bottom = '0';
-      shotIndicator.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-      multiShotContainer.appendChild(shotIndicator);
-      
-      // Calculate x velocity based on angle
-      const radians = angle * (Math.PI / 180);
-      const xVelocity = Math.sin(radians) * playerStats.leafSpeed;
-      const yVelocity = -Math.cos(radians) * playerStats.leafSpeed;
-      
-      const leafObj = {
-        element: leaf,
-        x: playerX + player.offsetWidth / 2 - 7.5,
-        y: gameContainer.offsetHeight - player.offsetHeight - 20,
-        xVelocity: xVelocity,
-        yVelocity: yVelocity,
-        width: 15,
-        height: 25
-      };
-      
-      leaf.style.left = `${leafObj.x}px`;
-      leaf.style.top = `${leafObj.y}px`;
-      
-      leaves.push(leafObj);
-    }
-    
-    // Remove shot indicators after a short delay
-    setTimeout(() => {
-      multiShotContainer.innerHTML = '';
-    }, 200);
-  }
-  
-  // Drop CO2
-  function dropCO2(invader) {
-    if (gameOver || !invader.alive) return;
-    
-    const co2 = document.createElement('div');
-    co2.className = 'co2';
-    co2.textContent = 'CO2';
-    gameContainer.appendChild(co2);
-    
-    const co2Obj = {
-      element: co2,
-      x: invader.x + invader.width / 2 - 12.5,
-      y: invader.y + invader.height,
-      speed: 3 + Math.random() * 2,
-      width: 25,
-      height: 25
-    };
-    
-    co2.style.left = `${co2Obj.x}px`;
-    co2.style.top = `${co2Obj.y}px`;
-    
-    co2Particles.push(co2Obj);
-    invader.lastDrop = Date.now();
-  }
-  
-  // Check collisions
-  function checkCollisions() {
-    if (gameOver) return;
-    
-    // Check leaf-invader collisions
-    for (let i = leaves.length - 1; i >= 0; i--) {
-      const leaf = leaves[i];
-      
-      // Remove leaves that go off screen
-      if (leaf.y < -leaf.height) {
-        leaf.element.remove();
-        leaves.splice(i, 1);
-        continue;
-      }
-      
-      // Check collisions with invaders
-      for (let j = invaders.length - 1; j >= 0; j--) {
-        const invader = invaders[j];
-        
-        if (!invader.alive) continue;
-        
-        if (checkCollision(leaf, invader)) {
-          // Remove leaf
-          leaf.element.remove();
-          leaves.splice(i, 1);
-          
-          // Remove invader
-          invader.alive = false;
-          invader.element.remove();
-          
-          // Add score
-          const pointValue = 10 * (1 + 0.25 * playerStats.activeBonuses.filter(b => b.id === 'eco-education').length);
-          score += pointValue;
-          scoreEl.textContent = score;
-          
-          // Check if all invaders are defeated
-          if (invaders.every(inv => !inv.alive) && score != 0) {
-            levelComplete();
-          }
-          
-          break;
         }
       }
-    }
-    
-    // Check leaf-CO2 collisions
-    for (let i = leaves.length - 1; i >= 0; i--) {
-      const leaf = leaves[i];
-      
-      for (let j = co2Particles.length - 1; j >= 0; j--) {
-        const co2 = co2Particles[j];
-        
-        if (checkCollision(leaf, co2)) {
-          // Remove leaf
-          leaf.element.remove();
-          leaves.splice(i, 1);
-          
-          // Remove CO2
-          co2.element.remove();
-          co2Particles.splice(j, 1);
-          
-          // Decrease temperature
-          temperature = Math.max(0, temperature - (0.5 * playerStats.co2Absorption));
-          updateTemperature();
-          
-          // Add score
-          const pointValue = 5 * (1 + 0.25 * playerStats.activeBonuses.filter(b => b.id === 'eco-education').length);
-          score += pointValue;
-          scoreEl.textContent = score;
-          
-          break;
-        }
+
+      // Helper function to check collision between two objects
+      function checkCollision(a, b) {
+        return a.x < b.x + b.width &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.height &&
+          a.y + a.height > b.y;
       }
-    }
-    
-    // Check CO2-player collisions
-    for (let i = co2Particles.length - 1; i >= 0; i--) {
-      const co2 = co2Particles[i];
-      
-      // Check if CO2 reached bottom
-      if (co2.y > gameContainer.offsetHeight) {
-        co2.element.remove();
-        co2Particles.splice(i, 1);
-        
-        // Increase temperature
-        temperature += 1;
-        updateTemperature();
-        
-        if (temperature >= 100) {
-          endGame();
+
+      let oldTemp = -1;
+      // Update temperature display
+      function updateTemperature() {
+        if (Math.floor(temperature / 25) != oldTemp) {
+          oldTemp = Math.floor(temperature / 25);
+          document.body.style.backgroundImage = imageBackground + imagePerHealth[oldTemp];
         }
-        
-        continue;
+        temperatureEl.style.height = `${temperature * 3}px`;
+        temperatureLabel.textContent = `${Math.round(temperature)}°C`;
       }
-      
-      // Check collision with player
-      if (checkCollision(co2, {
-        x: playerX,
-        y: gameContainer.offsetHeight - player.offsetHeight - 20,
-        width: player.offsetWidth,
-        height: player.offsetHeight
-      })) {
-        co2.element.remove();
-        co2Particles.splice(i, 1);
-        
-        // Increase temperature more when hitting player directly
-        temperature += 2;
-        updateTemperature();
-        
-        if (temperature >= 100) {
-          endGame();
+
+      // Level complete
+      function levelComplete() {
+        // Pause the game
+        gameOver = true;
+
+        // Show level transition
+        levelTransition.style.display = 'flex';
+        level++;
+        newLevelEl.textContent = level;
+        levelEl.textContent = level;
+
+        // Show level transition for 2 seconds
+        setTimeout(() => {
+          levelTransition.style.display = 'none';
+          showBonusScreen();
+        }, 2000);
+      }
+
+      // Show bonus screen
+      function showBonusScreen() {
+        bonusOptions.innerHTML = '';
+
+        // Get 3 random bonuses
+        const availableBonuses = [...bonuses];
+        const selectedBonuses = [];
+
+        for (let i = 0; i < 3; i++) {
+          if (availableBonuses.length === 0) break;
+
+          const randomIndex = Math.floor(Math.random() * availableBonuses.length);
+          selectedBonuses.push(availableBonuses[randomIndex]);
+          availableBonuses.splice(randomIndex, 1);
         }
-      }
-    }
-  }
-  
-  // Helper function to check collision between two objects
-  function checkCollision(a, b) {
-    return a.x < b.x + b.width &&
-           a.x + a.width > b.x &&
-           a.y < b.y + b.height &&
-           a.y + a.height > b.y;
-  }
-  
-  // Update temperature display
-  function updateTemperature() {
-    temperatureEl.style.height = `${temperature * 3}px`;
-    temperatureLabel.textContent = `${Math.round(temperature)}°C`;
-  }
-  
-  // Level complete
-  function levelComplete() {
-    // Pause the game
-    gameOver = true;
-    
-    // Show level transition
-    levelTransition.style.display = 'flex';
-    level++;
-    newLevelEl.textContent = level;
-    levelEl.textContent = level;
-    
-    // Show level transition for 2 seconds
-    setTimeout(() => {
-      levelTransition.style.display = 'none';
-      showBonusScreen();
-    }, 2000);
-  }
-  
-  // Show bonus screen
-  function showBonusScreen() {
-    bonusOptions.innerHTML = '';
-    
-    // Get 3 random bonuses
-    const availableBonuses = [...bonuses];
-    const selectedBonuses = [];
-    
-    for (let i = 0; i < 3; i++) {
-      if (availableBonuses.length === 0) break;
-      
-      const randomIndex = Math.floor(Math.random() * availableBonuses.length);
-      selectedBonuses.push(availableBonuses[randomIndex]);
-      availableBonuses.splice(randomIndex, 1);
-    }
-    
-    // Create bonus cards
-    selectedBonuses.forEach(bonus => {
-      const card = document.createElement('div');
-      card.className = 'bonus-card';
-      card.innerHTML = `
+
+        // Create bonus cards
+        selectedBonuses.forEach(bonus => {
+          const card = document.createElement('div');
+          card.className = 'bonus-card';
+          card.innerHTML = `
         <div class="bonus-icon">${bonus.icon}</div>
         <div class="bonus-name">${bonus.name}</div>
         <div class="bonus-description">${bonus.description}</div>
         <div class="bonus-effect">+${bonus.effect}</div>
         ${bonus.malus ? `<div class="bonus-malus">-${bonus.malus}</div>` : ''}
       `;
-      
-      card.addEventListener('click', () => {
-        const bonusType = bonus.apply();
-        
-        // Add to active bonuses if not one-time
-        if (bonusType !== 'one-time') {
-          playerStats.activeBonuses.push(bonus);
-          
-          // Create active bonus indicator
-          const bonusIcon = document.createElement('div');
-          bonusIcon.className = 'active-bonus';
-          bonusIcon.setAttribute('data-id', bonus.id);
-          bonusIcon.textContent = bonus.icon;
-          
-          // Add tooltip
-          bonusIcon.title = bonus.name;
-          
-          activeBonusesContainer.appendChild(bonusIcon);
-        }
-        
-        // Hide bonus screen
-        bonusScreen.style.display = 'none';
-        
-        // Start next level
-        startNextLevel();
-      });
-      
-      bonusOptions.appendChild(card);
-    });
-    
-    // Show bonus screen
-    bonusScreen.style.display = 'flex';
-  }
-  
-  // Start next level
-  function startNextLevel() {
-    // Reset game state for new level
-    gameOver = false;
-    
-    // Make game harder with each level
-    // Instead of adding more rows, increase speed and CO2 drop chance
-    invaderGroup.moveInterval = Math.max(100, invaderGroup.moveInterval * 0.9);
-    invaderGroup.moveSpeed = Math.min(3, invaderGroup.moveSpeed * 1.1);
-    invaderGroup.dropChance = Math.min(0.08, invaderGroup.dropChance * 1.2);
-    
-    // Every 3 levels, add an extra row (max 5)
-    if (level % 3 === 0 && invaderGroup.rows < 5) {
-      invaderGroup.rows++;
-    }
 
-    // Spawn new invaders
-    spawnInvaderGrid();
-    
-    // Continue game loop
-    if (!gameLoopRunning) {
-      gameLoop();
-    }
-  }
-  
-  // End game
-  function endGame() {
-    gameOver = true;
-    gameOverEl.style.display = 'flex';
-    finalScoreEl.textContent = score;
-  }
-  
-  // Game loop
-  let gameLoopRunning = false;
-  function gameLoop() {
-    if (!gameStarted) return;
-    
-    gameLoopRunning = true;
-    
-    // Apply temperature healing from bonuses
-    if (playerStats.healRate > 0 && !gameOver) {
-      temperature = Math.max(0, temperature - playerStats.healRate / 60);
+          card.addEventListener('click', () => {
+            const bonusType = bonus.apply();
+
+            // Add to active bonuses if not one-time
+            if (bonusType !== 'one-time') {
+              playerStats.activeBonuses.push(bonus);
+
+              // Create active bonus indicator
+              const bonusIcon = document.createElement('div');
+              bonusIcon.className = 'active-bonus';
+              bonusIcon.setAttribute('data-id', bonus.id);
+              bonusIcon.textContent = bonus.icon;
+
+              // Add tooltip
+              bonusIcon.title = bonus.name;
+
+              activeBonusesContainer.appendChild(bonusIcon);
+            }
+
+            // Hide bonus screen
+            bonusScreen.style.display = 'none';
+
+            // Start next level
+            startNextLevel();
+          });
+
+          bonusOptions.appendChild(card);
+        });
+
+        // Show bonus screen
+        bonusScreen.style.display = 'flex';
+      }
+
+      // Start next level
+      function startNextLevel() {
+        // Reset game state for new level
+        gameOver = false;
+
+        // Make game harder with each level
+        // Instead of adding more rows, increase speed and CO2 drop chance
+        invaderGroup.moveInterval = Math.max(100, invaderGroup.moveInterval * 0.9);
+        invaderGroup.moveSpeed = Math.min(3, invaderGroup.moveSpeed * 1.1);
+        invaderGroup.dropChance = Math.min(0.08, invaderGroup.dropChance * 1.2);
+
+        // Every 3 levels, add an extra row (max 5)
+        if (level % 3 === 0 && invaderGroup.rows < 5) {
+          invaderGroup.rows++;
+        }
+
+        // Spawn new invaders
+        spawnInvaderGrid();
+
+        // Continue game loop
+        if (!gameLoopRunning) {
+          gameLoop();
+        }
+      }
+
+      // End game
+      function endGame() {
+
+        audioPlayer.src = soundFiles[1];
+        audioPlayer.play(); // Auto-play the new sound
+        gameOver = true;
+        gameOverEl.style.display = 'flex';
+        finalScoreEl.textContent = score;
+      }
+
+      // Game loop
+      let gameLoopRunning = false;
+      function gameLoop() {
+        if (!gameStarted) return;
+
+        gameLoopRunning = true;
+
+        // Apply temperature healing from bonuses
+        if (playerStats.healRate > 0 && !gameOver) {
+          temperature = Math.max(0, temperature - playerStats.healRate / 60);
+          updateTemperature();
+        }
+
+        // Process player movement
+        if (keys.left) {
+          playerX = Math.max(0, playerX - playerSpeed);
+        }
+        if (keys.right) {
+          playerX = Math.min(gameContainer.offsetWidth - player.offsetWidth, playerX + playerSpeed);
+        }
+        if (keys.space) {
+          shootLeaf();
+        }
+
+        // Update player position
+        player.style.left = `${playerX}px`;
+
+        // Move invader grid
+        moveInvaderGrid();
+
+        // Update leaf positions
+        leaves.forEach(leaf => {
+          leaf.y += leaf.yVelocity;
+          leaf.x += leaf.xVelocity;
+          leaf.element.style.top = `${leaf.y}px`;
+          leaf.element.style.left = `${leaf.x}px`;
+        });
+
+        // Update CO2 particle positions
+        co2Particles.forEach(co2 => {
+          co2.y += co2.speed;
+          co2.element.style.top = `${co2.y}px`;
+        });
+
+        // Check collisions
+        checkCollisions();
+
+        // Continue the game loop
+        if (!gameOver) {
+          requestAnimationFrame(gameLoop);
+        } else {
+          gameLoopRunning = false;
+        }
+      }
+
+      // Event listeners
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          keys.left = true;
+        }
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          keys.right = true;
+        }
+        if (e.key === ' ') {
+          keys.space = true;
+          e.preventDefault(); // Prevent page scrolling
+        }
+      });
+
+      document.addEventListener('keyup', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          keys.left = false;
+        }
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          keys.right = false;
+        }
+        if (e.key === ' ') {
+          keys.space = false;
+        }
+      });
+
+      // Event listeners for game controls
+      startBtn.addEventListener('click', startGame);
+      restartBtn.addEventListener('click', () => {
+        resetGame();
+        startGame();
+      });
+
+      // Initialize the game
       updateTemperature();
-    }
-    
-    // Process player movement
-    if (keys.left) {
-      playerX = Math.max(0, playerX - playerSpeed);
-    }
-    if (keys.right) {
-      playerX = Math.min(gameContainer.offsetWidth - player.offsetWidth, playerX + playerSpeed);
-    }
-    if (keys.space) {
-      shootLeaf();
-    }
-    
-    // Update player position
-    player.style.left = `${playerX}px`;
-    
-    // Move invader grid
-    moveInvaderGrid();
-    
-    // Update leaf positions
-    leaves.forEach(leaf => {
-      leaf.y += leaf.yVelocity;
-      leaf.x += leaf.xVelocity;
-      leaf.element.style.top = `${leaf.y}px`;
-      leaf.element.style.left = `${leaf.x}px`;
     });
-    
-    // Update CO2 particle positions
-    co2Particles.forEach(co2 => {
-      co2.y += co2.speed;
-      co2.element.style.top = `${co2.y}px`;
-    });
-    
-    // Check collisions
-    checkCollisions();
-    
-    // Continue the game loop
-    if (!gameOver) {
-      requestAnimationFrame(gameLoop);
-    } else {
-      gameLoopRunning = false;
-    }
-  }
-  
-  // Event listeners
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-      keys.left = true;
-    }
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-      keys.right = true;
-    }
-    if (e.key === ' ') {
-      keys.space = true;
-      e.preventDefault(); // Prevent page scrolling
-    }
-  });
-  
-  document.addEventListener('keyup', e => {
-    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-      keys.left = false;
-    }
-    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-      keys.right = false;
-    }
-    if (e.key === ' ') {
-      keys.space = false;
-    }
-  });
-  
-  // Event listeners for game controls
-  startBtn.addEventListener('click', startGame);
-  restartBtn.addEventListener('click', () => {
-    resetGame();
-    startGame();
-  });
-  
-  // Initialize the game
-  updateTemperature();
-});
-    </script>
+  </script>
 </body>
 
 </html>
