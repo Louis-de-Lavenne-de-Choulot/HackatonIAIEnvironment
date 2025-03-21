@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Space Invaders - Home</title>
+    <style>
+        @font-face {
+            font-family: 'Home Video';
+            src: url('fonts/HomeVideo.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Home Video';
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 36px;
+            color: #33cc33;
+            text-shadow: 0 0 10px rgba(51, 204, 51, 0.7);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 300px;
+        }
+
+        .menu-button {
+            padding: 15px;
+            background-color: rgba(51, 204, 51, 0.2);
+            border: 2px solid #33cc33;
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(51, 204, 51, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(51, 204, 51, 0.7);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #animated-leaves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .animated-leaf {
+            position: absolute;
+            width: 20px;
+            height: 35px;
+            background-color: #33cc33;
+            clip-path: ellipse(50% 50% at 50% 50%);
+            transform: rotate(-45deg);
+            opacity: 0.5;
+            animation: falling 15s linear infinite;
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) translateX(0) rotate(-45deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.7;
+            }
+
+            90% {
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateY(100vh) translateX(100px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="animated-leaves"></div>
+    <div id="main-container">
+        <h1 class="title">ECO SPACE INVADERS</h1>
+        <p class="subtitle">Save the planet one leaf at a time</p>
+
+        <div class="menu-container">
+            <a href="game.html" class="menu-button">PLAY GAME</a>
+            <a href="about.html" class="menu-button">ABOUT</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 Eco Space Invaders | All Rights Reserved
+    </div>
+
+    <script>
+        // Create animated leaves in the background
+        const leavesContainer = document.getElementById('animated-leaves');
+        const numLeaves = 20;
+
+        for (let i = 0; i < numLeaves; i++) {
+            const leaf = document.createElement('div');
+            leaf.classList.add('animated-leaf');
+
+            // Random starting positions and animation durations
+            const startX = Math.random() * window.innerWidth;
+            const duration = 15 + Math.random() * 10;
+            const delay = Math.random() * 15;
+            const size = 10 + Math.random() * 20;
+
+            leaf.style.left = `${startX}px`;
+            leaf.style.width = `${size}px`;
+            leaf.style.height = `${size * 1.5}px`;
+            leaf.style.animationDuration = `${duration}s`;
+            leaf.style.animationDelay = `${delay}s`;
+
+            leavesContainer.appendChild(leaf);
+        }
+    </script>
+</body>
+
+</html>
