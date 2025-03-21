@@ -85,8 +85,8 @@
     </style>
 </head>
 <body>
-    <video id="video-background" autoplay muted>
-        <source src="background.mp4" type="video/mp4">
+    <video id="video-background" autoplay>
+        <source src="Intro-hackaton.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <div id="main-container">
@@ -138,6 +138,9 @@
                 setTimeout(typeSentence, 1000); // Adjust delay as needed
             } else {
                 glitchText.innerHTML = sentences[currentSentenceIndex - 1];
+                setTimeout(() => {
+                    window.location.href = 'game.html';
+                }, 10000);
             }
         }
 

@@ -1,0 +1,15 @@
+Text:
+    -What are the carbon cost of all the types of generative AI, and include how long would a tree need to recoup that much carbon"
+
+Musics:
+    -calm and slow  8-bit video game music with drums and synth
+    -
+
+Images:
+    prompt : post apocalyptic streets of a city at night with smoke
+    anti-prompt: electric lights, street lights, fire, people, light, sun
+    style: cinematic
+
+Video:
+    -Multiple short static shots of post apocalyptic towns, CRT effects and heavy visual artifact, analogue horror vibes, black fade in and fade out
+    -
