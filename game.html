@@ -59,7 +59,7 @@
       position: absolute;
       width: 20px;
       height: 20px;
-      background-image: url('/images/sprite/chatgpt.webp');
+      background-image: url('https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/chatgpt.webp');
       background-size: auto;
       /* No stretching */
       background-repeat: no-repeat;
@@ -74,7 +74,7 @@
       position: absolute;
       width: 16px;
       height: 16px;
-      background-image: url('/images/sprite/greenSprites.png');
+      background-image: url('https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/greenSprites.png');
       background-size: auto;
       /* No stretching */
       background-repeat: no-repeat;
@@ -85,7 +85,7 @@
       position: absolute;
       width: 16px;
       height: 16px;
-      background-image: url('/images/sprite/redSprites.png');
+      background-image: url('https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/redSprites.png');
       background-size: auto;
       background-repeat: no-repeat;
     }
@@ -387,7 +387,7 @@
 
       const soundFiles = ["sounds/game.mp3", "sounds/lost.mp3"];
       // Game variables
-      let imageBackground = 'url("/images/forest/forest';
+      let imageBackground = 'url("https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/forest/forest';
       let imagePerHealth = ['01.png")', '02.png")', '03.png")', '04.png")'];
       let playerX = gameContainer.offsetWidth / 2 - player.offsetWidth / 2;
       let playerSpeed = 10;
@@ -687,7 +687,7 @@
         gameOverEl.style.display = 'none';
       }
 
-      const spriteEnemy = ["/images/sprite/mistral.png", "/images/sprite/deepseek.jpg", "/images/sprite/chatgpt.webp"];
+      const spriteEnemy = ["https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/mistral.png", "https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/deepseek.jpg", "https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/chatgpt.webp"];
       // Spawn grid of invaders (Space Invaders style)
       function spawnInvaderGrid() {
         if (!gameStarted || gameOver) return;
@@ -714,7 +714,7 @@
               col: col,
               width: invaderGroup.width,
               height: invaderGroup.height,
-              //random between /images/sprite/ mistral.png, chatgpt.webp and deepseek.jpg 
+              //random between https://louis-de-lavenne-de-choulot.github.io/HackatonIAIEnvironment/images/sprite/ mistral.png, chatgpt.webp and deepseek.jpg 
               backgroundImage: spriteEnemy[Math.floor(Math.random() * spriteEnemy.length)],
               lastDrop: Date.now(),
               alive: true
