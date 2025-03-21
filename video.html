@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Space Invaders - Horror</title>
+    <style>
+        @font-face {
+            font-family: 'Home Video';
+            src: url('fonts/HomeVideo.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Home Video';
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        .title {
+            font-size: 36px;
+            color: #33cc33;
+            text-shadow: 0 0 10px rgba(51, 204, 51, 0.7);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .content {
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+        .glitch {
+            color: red;
+            font-size: 24px;
+            position: relative;
+            animation: glitch-animation 1.5s infinite;
+        }
+        @keyframes glitch-animation {
+            0%, 100% {
+                text-shadow: 0.05em 0 0 red, -0.05em 0 0 cyan;
+            }
+            20% {
+                text-shadow: 0.05em 0 0 red, -0.05em 0 0 cyan;
+            }
+            40% {
+                text-shadow: 0.05em 0 0 red, -0.05em 0 0 cyan;
+            }
+            60% {
+                text-shadow: 0.05em 0 0 red, -0.05em 0 0 cyan;
+            }
+            80% {
+                text-shadow: 0.05em 0 0 red, -0.05em 0 0 cyan;
+            }
+        }
+        #video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <video id="video-background" autoplay muted>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="main-container">
+        <div class="content" id="text-container"></div>
+        <div class="glitch" id="glitch-text"></div>
+    </div>
+    <script>
+        const sentences = [
+            "In their hubris, Humans have brought forth what they call the \n\"Artificial Revolution\"\n dooming themselves and the environment.",
+            "You are the only thing that stands between Earth and its doom.",
+            "Exterminate the Abominable Intelligence."
+        ];
+        const sounds = ['a.mp3', 'b.mp3'];
+        let currentSentenceIndex = 0;
+        let currentCharIndex = 0;
+        const textContainer = document.getElementById('text-container');
+        const glitchText = document.getElementById('glitch-text');
+
+        function playSound(sound) {
+            const audio = new Audio(sound);
+            audio.play();
+        }
+
+        function typeSentence() {
+            if (currentSentenceIndex >= sentences.length) return;
+
+            const sentence = sentences[currentSentenceIndex];
+            if (currentCharIndex < sentence.length) {
+                const char = sentence[currentCharIndex];
+                if (char === '\n') {
+                    textContainer.innerHTML += '<br>';
+                } else {
+                    textContainer.innerHTML += char;
+                    playSound(sounds[Math.floor(Math.random() * sounds.length)]);
+                }
+                currentCharIndex++;
+                setTimeout(typeSentence, 100); // Adjust speed as needed
+            } else {
+                textContainer.innerHTML += '...';
+                setTimeout(wipeText, 2000); // Adjust delay as needed
+            }
+        }
+
+        function wipeText() {
+            textContainer.innerHTML = '';
+            currentSentenceIndex++;
+            currentCharIndex = 0;
+            if (currentSentenceIndex < sentences.length) {
+                setTimeout(typeSentence, 1000); // Adjust delay as needed
+            } else {
+                glitchText.innerHTML = sentences[currentSentenceIndex - 1];
+            }
+        }
+
+        setTimeout(() => {
+            typeSentence();
+        }, 11000);
+    </script>
+</body>
+</html>
